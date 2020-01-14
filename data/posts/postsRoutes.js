@@ -34,16 +34,23 @@ router.get('/:id', (req, res) => {
       res.status(500).send(`Internal server error 500: c ould not retrieve post by id ${id}`);
     })
 })
+// client post to /api/posts
 router.post('/', (req, res) => {
-  db.insert(req.body)
-    .then( id => {
-      console.log(id);
-      res.status(201).json(id);
-    })
-    .catch( err => {
-      console.log(err);
-      res.status(500).send('Internal Server Error 500: Could not add post');
-    });
+  if(!req.body.title || !req.body.contents) {
+    console.log(req.body);
+    res.status(400).json({ errorMessage: "Please provide title and contents for the post." });
+  } else {
+    db.insert(req.body)
+      .then( id => {
+        console.log(id);
+        res.status(201).json(id);
+      })
+      .catch( err => {
+        console.log(err);
+        res.status(500).send('Internal Server Error 500: Could not add post');
+      });
+  }
+
 });
 router.put('/:id', (req, res) => {
   const id = req.params.id;
