@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-const comments = require('./comments/commentsRoutes');
+const comments = require('../comments/commentsRoutes');
+router.use('/:id/comments', comments);
 
 router.get('/', (req, res) => {
   db.find()
@@ -14,7 +15,7 @@ router.get('/', (req, res) => {
       console.log(err);
       res.status(500).send('Internal Server Error 500: Could not retrieve posts');
     })
-})
+});
 router.post('/', (req, res) => {
   db.insert(req.body)
     .then( id => {
@@ -24,7 +25,7 @@ router.post('/', (req, res) => {
     .catch( err => {
       console.log(err);
       res.status(500).send('Internal Server Error 500: Could not add post');
-})
-router.use('/:id/comments', comments);
+    });
+});
 
 module.exports = router;
