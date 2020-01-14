@@ -3,7 +3,14 @@ const router = express.Router();
 const db = require('../db');
 
 const comments = require('../comments/commentsRoutes');
-router.use('/:id/comments', comments);
+
+router.use('/:id/comments', (req, res, next) => {
+  console.log('hi');
+  req.id_config = {
+    id: req.params.id
+  }
+  next();
+}, comments);
 
 router.get('/', (req, res) => {
   db.find()
