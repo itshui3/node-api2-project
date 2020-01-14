@@ -26,11 +26,12 @@ router.get('/:id', (req, res) => {
     })
 })
 router.post('/', (req, res) => {
-  const post = req.body;
-  console.log(post);
+  const comment = req.body;
+  console.log(comment);
   const id = req.id_config.id;
+  comment.post_id = id;
 
-  db.insertComment(post)
+  db.insertComment(comment)
     .then( reso => {
       res.status(200).json(reso);
     })
