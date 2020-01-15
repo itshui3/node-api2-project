@@ -12,9 +12,14 @@ router.use('/:id/comments', (req, res, next) => {
 }, comments);
 
 router.get('/', (req, res) => {
+  const sortBy = req.query.sortby || 'postid';
+
   db.find()
     .then( posts => {
-      res.status(200).json(posts);
+      const response = posts.sort(
+        (a, b) => (a[sortBy] < b[sortBy] ? -1 : 1)
+      )
+      res.status(200).json(response);
       console.log(posts, 'posts');
     })
     .catch( err => {
