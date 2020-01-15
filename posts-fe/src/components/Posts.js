@@ -5,15 +5,17 @@ import axios from 'axios';
 //Redux
 import { useDispatch, connect } from 'react-redux';
 import constants from '../redux/constants'
+//Styles
+import './Posts.scss';
+//Components
+import PostsCard from './PostsCard';
 
 const Posts = props => {
   const dispatch = useDispatch();
-  console.log(props.match.params.id);
   useEffect(() => {
     if(props.match.params.id) {
       axios.get(`http://localhost:5000/api/posts/${props.match.params.id}`)
         .then(res => {
-          console.log(res)
           dispatch({ type: constants.GET_POST_BY_ID, payload: res.data })
         })
         .catch(err => {
@@ -22,8 +24,7 @@ const Posts = props => {
     } else {
       axios.get('http://localhost:5000/api/posts')
         .then(res => {
-          console.log(res)
-          dispatch({ type: constants.GET_POSTS, payload: res.data[0] })
+          dispatch({ type: constants.GET_POSTS, payload: res.data })
         })
         .catch(err => {
           console.log(err);
@@ -41,10 +42,7 @@ const Posts = props => {
     <>
       {
         props.posts && props.posts.map((post, index) => (
-          <div key={index}>
-            <h2>{post.title}</h2>
-            <p>{post.contents}</p>
-          </div>
+          <PostsCard key={index} post={post} index={index} />
         ))
       }
     </>
