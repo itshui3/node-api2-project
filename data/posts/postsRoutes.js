@@ -41,7 +41,7 @@ router.get('/:id', (req, res) => {
 })
 // client post to /api/posts
 router.post('/', (req, res) => {
-  
+
   if(!req.body.title || !req.body.contents) {
     console.log(req.body);
     res.status(400).json({ errorMessage: "Please provide title and contents for the post." });
@@ -65,6 +65,14 @@ router.put('/:id', (req, res) => {
   const post = req.body;
 
   console.log(id, post);
+  const updatePost = () => db.update(id, post)
+    .then( id => {
+      res.status(200).json(post);
+    })
+    .catch( err => {
+      console.log(err);
+      res.status(500).send('Internal server error 500: could not edit post');
+    });
 
   if(!post.title || !post.contents) {
     res.status(400).json({ errorMessage: `Please provide title and/or contents for the post.` })
@@ -75,15 +83,8 @@ router.put('/:id', (req, res) => {
         if(!postAtId[0]) {
           res.status(404).json({ errorMessage: `The post with the specified ID: ${id} does not exist.` })
         } else {
-
-          db.update(id, post)
-            .then( id => {
-              res.status(200).json(post);
-            })
-            .catch( err => {
-              console.log(err);
-              res.status(500).send('Internal server error 500: could not edit post');
-            })
+          updatePost(id, post);
+          
         }
       })
   }

@@ -8,14 +8,14 @@ router.get('/', (req, res) => {
   db.findPostComments(postId)
     .then( comments => {
       if (!comments[0]) {
-        res.status(404).json({ errorMessage: `The post with the specified ID: ${postId} does not exist.` })
+        res.status(404).json({ message: `The post with the specified ID: ${postId} does not exist.` })
       } else {
         console.log(comments);
         res.status(200).json(comments);
       }
     })
     .catch( err => {
-      res.status(500).send(`Internal Server Error, could not retrieve comments at postId ${postId}`)
+      res.status(500).json({ error: `Internal Server Error, could not retrieve comments at postId ${postId}`})
     })
 })
 router.get('/:id', (req, res) => {
@@ -27,20 +27,21 @@ router.get('/:id', (req, res) => {
     })
     .catch( err => {
       console.log(err);
-      res.status(500).send(`Internal Server Error 500, could not find comment by id ${id}`)
+      res.status(500).json({ error: `Internal Server Error 500, could not find comment by id ${id}` })
     })
 })
 router.post('/', (req, res) => {
   const comment = req.body;
   const postId = req.id_config.id;
   comment.post_id = postId;
-  const insertComment = db.insertComment(comment)
+
+  const insertComment = () => db.insertComment(comment)
     .then( reso => {
       res.status(200).json(comment);
     })
     .catch( err => {
       console.log(err);
-      res.status(500).send(`Internal server error 500: could not add comment at postId ${postId}`);
+      res.status(500).json({ error: `Internal server error 500: could not add comment at postId ${postId}` });
     })
 
   if(!req.body.text) {
